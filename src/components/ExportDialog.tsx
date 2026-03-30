@@ -1,7 +1,7 @@
 import { Download } from "lucide-react";
 import { useState } from "react";
 import { TreeNode } from "../types/tree";
-import { exportTree, ExportFormat } from "../utils/exportTree";
+import { ExportFormat, exportTree } from "../utils/exportTree";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
@@ -20,7 +20,7 @@ export function ExportDialog({ tree, isOpen, onClose }: { tree: TreeNode | null;
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Export Decision Tree</DialogTitle>
+          <DialogTitle>Export Your Tree</DialogTitle>
           <DialogDescription>
             Choose a format to download your project.
           </DialogDescription>
@@ -28,7 +28,7 @@ export function ExportDialog({ tree, isOpen, onClose }: { tree: TreeNode | null;
 
         <div className="py-4 flex flex-col space-y-4">
           <Select value={format} onValueChange={(val) => { if (val) setFormat(val as ExportFormat) }}>
-            <SelectTrigger>
+            <SelectTrigger className="uppercase w-50">
               <SelectValue placeholder="Select format" />
             </SelectTrigger>
             <SelectContent>
