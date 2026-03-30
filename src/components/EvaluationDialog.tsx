@@ -1,5 +1,5 @@
 // EvaluationDialog
-import { AlertCircle, CheckCircle2, RotateCcw, X } from "lucide-react";
+import { CheckCircle2, Clapperboard, RotateCcw } from "lucide-react";
 import { useState } from "react";
 import { TreeNode } from "../types/tree";
 import { Button } from "./ui/button";
@@ -27,11 +27,11 @@ export function EvaluationDialog({
   };
 
   return (
-    <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-125">
+    <Dialog open={true} onOpenChange={(open) => !open && onClose()} disablePointerDismissal>
+      <DialogContent className="sm:max-w-200 h-130">
         <DialogHeader>
           <DialogTitle className="text-xl flex items-center space-x-2">
-            <AlertCircle className="w-5 h-5 text-blue-600" />
+            <Clapperboard className="w-5 h-5 text-blue-600" />
             <span>Interactive Evaluation</span>
           </DialogTitle>
           <DialogDescription>
@@ -39,10 +39,10 @@ export function EvaluationDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="min-h-48 flex flex-col justify-center items-center py-6 bg-slate-50/50 rounded-lg border border-slate-100 my-4">
+        <div className="flex flex-col justify-center items-center py-6 bg-slate-50/50 rounded-lg border border-slate-100 my-4 max-w-full overflow-hidden">
           {currentNode.type === "decision" ? (
-            <div className="w-full text-center px-6">
-              <h3 className="text-xl font-medium text-slate-800 mb-8 whitespace-pre-wrap">
+            <div className="w-full text-center px-6 overflow-hidden flex flex-col gap-15">
+              <h3 className="text-xl font-medium text-slate-800 mb-8 whitespace-pre-wrap break-all">
                 {currentNode.question || "No Question Provided"}
               </h3>
               <div className="flex flex-wrap justify-center gap-3">
@@ -51,7 +51,7 @@ export function EvaluationDialog({
                     key={child.label}
                     onClick={() => traverse(child.label)}
                     variant="outline"
-                    className="min-w-30 border-blue-200 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 transition-all font-medium py-6"
+                    className="min-w-30 border-blue-200 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 transition-all font-medium py-6 h-auto whitespace-normal max-w-full break-all"
                   >
                     {child.label}
                   </Button>
@@ -64,7 +64,7 @@ export function EvaluationDialog({
                 <CheckCircle2 className="w-8 h-8 text-green-600" />
               </div>
               <p className="text-sm font-semibold text-green-600 uppercase tracking-widest mb-2">Final Outcome</p>
-              <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-slate-800 to-slate-600">
+              <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-slate-800 to-slate-600 break-all whitespace-pre-wrap">
                 {currentNode.outcome || "No Outcome Provided"}
               </h2>
             </div>
@@ -73,7 +73,8 @@ export function EvaluationDialog({
 
         <DialogFooter className="flex space-x-2 sm:justify-between items-center border-t pt-4">
           <Button
-            variant="ghost"
+            variant="outline"
+            size={"lg"}
             onClick={restart}
             disabled={currentNode === tree}
             className="text-slate-500"
@@ -82,7 +83,6 @@ export function EvaluationDialog({
             Start Over
           </Button>
           <Button onClick={onClose} className="bg-slate-900 hover:bg-slate-800">
-            <X className="w-4 h-4 mr-2" />
             Close
           </Button>
         </DialogFooter>

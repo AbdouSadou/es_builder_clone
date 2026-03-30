@@ -1,5 +1,5 @@
 // TreeNodeComponent
-import { ChevronDown, ChevronRight, GitBranch, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronLeft, GitBranch, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { TreeNode } from "../types/tree";
 import { NodeEditor } from "./NodeEditor";
@@ -49,7 +49,8 @@ export function TreeNodeComponent({
                   onClick={() => setExpanded(!expanded)}
                   className="h-8 px-2 text-slate-500 hover:text-slate-900"
                 >
-                  {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                  {expanded ? <ChevronDown className="h-4 w-4" />: <ChevronLeft className="h-4 w-4" />}
+                  {expanded ? <span> Collapse Tree</span> : <span>Expand Tree</span>}
                 </Button>
               )}
             </div>

@@ -13,6 +13,7 @@ export default function TreeView() {
   const { tree, initRoot, updateNode, addBranch, deleteNode, updateBranchLabel } = useTree();
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [errorDialog, setErrorDialog] = useState({ isOpen: false, message: "" });
+  const [nodeToDelete, setNodeToDelete] = useState<string | null>(null);
 
   // Minimal validation before evaluating
   const validateTree = () => {
@@ -65,15 +66,17 @@ export default function TreeView() {
       <header className="flex justify-between items-center p-4 bg-white border-b shadow-sm z-10">
         <div className="flex items-center space-x-2">
           <div className="h-8 w-8 bg-blue-600 rounded-md flex items-center justify-center">
-            <span className="text-white font-bold text-sm">AS</span>
+            <span className="text-white font-bold text-sm">DTB</span>
           </div>
           <h1 className="text-xl font-bold text-slate-800">Decision Tree Builder</h1>
+        <span className="text-xs text-slate-500">by Abdou Sadou</span>
+
         </div>
         <div className="space-x-3 flex">
           {!tree && (
             <Button onClick={initRoot} className="bg-emerald-600 hover:bg-emerald-700 text-white">
               <Plus className="mr-2 h-4 w-4" />
-              Add Root Node
+              Initialise Tree
             </Button>
           )}
           {tree && (
@@ -93,7 +96,7 @@ export default function TreeView() {
                 node={tree}
                 updateNode={updateNode}
                 addBranch={addBranch}
-                deleteNode={deleteNode}
+                deleteNode={setNodeToDelete}
                 updateBranchLabel={updateBranchLabel}
               />
             </div>
@@ -108,9 +111,10 @@ export default function TreeView() {
                      <h3 className="text-lg font-medium text-slate-900">No tree structure</h3>
                      <p className="text-sm mt-1">Start by adding a root node to build your decision tree.</p>
                    </div>
-                   <Button onClick={initRoot} variant="outline" className="mt-4">
-                     Initialize Tree
-                   </Button>
+                    <Button onClick={initRoot} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Initialise Tree
+                    </Button>
                  </CardContent>
                </Card>
             </div>
@@ -127,6 +131,19 @@ export default function TreeView() {
         onClose={() => setErrorDialog({ isOpen: false, message: "" })} 
         title="Tree is incomplete" 
         message={errorDialog.message} 
+      />
+      
+      <MessageDialog
+        isOpen={nodeToDelete !== null}
+        onClose={() => setNodeToDelete(null)}
+        title="Confirm Deletion"
+        message="Are you sure you want to delete this node? This action will also delete all its child branches."
+        onConfirm={() => {
+          if (nodeToDelete) deleteNode(nodeToDelete);
+          setNodeToDelete(null);
+        }}
+        confirmText="Delete Node"
+        cancelText="Cancel"
       />
     </div>
   );
