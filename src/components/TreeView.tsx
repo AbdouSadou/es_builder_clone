@@ -1,12 +1,18 @@
 // TreeView
+import { Play, Plus } from "lucide-react";
 import { useState } from "react";
 import { useTree } from "../state/useTree";
 import { EvaluationDialog } from "./EvaluationDialog";
+import { MessageDialog } from "./MessageDialog";
 import { TreeNodeComponent } from "./TreeNode";
+import { Button } from "./ui/button";
+import { Card, CardContent } from "./ui/card";
+import { ScrollArea } from "./ui/scroll-area";
 
 export default function TreeView() {
   const { tree, initRoot, updateNode, addBranch, deleteNode, updateBranchLabel } = useTree();
   const [isEvaluating, setIsEvaluating] = useState(false);
+  const [errorDialog, setErrorDialog] = useState({ isOpen: false, message: "" });
 
   // Minimal validation before evaluating
   const validateTree = () => {
@@ -45,57 +51,83 @@ export default function TreeView() {
   const handleEvaluate = () => {
     const errorMsg = validateTree();
     if (errorMsg) {
-      alert(`Tree is incomplete:\n\n${errorMsg}`);
+      setErrorDialog({
+        isOpen: true,
+        message: errorMsg
+      });
     } else {
       setIsEvaluating(true);
     }
   };
 
   return (
-    <div className="flex flex-col h-screen">
-      <header className="flex justify-between items-center p-4 bg-gray-800 text-white shadow">
-        <h1 className="text-xl font-bold">ES-Builder (Tree UI)</h1>
-        <div className="space-x-4">
+    <div className="flex flex-col h-screen bg-slate-50">
+      <header className="flex justify-between items-center p-4 bg-white border-b shadow-sm z-10">
+        <div className="flex items-center space-x-2">
+          <div className="h-8 w-8 bg-blue-600 rounded-md flex items-center justify-center">
+            <span className="text-white font-bold text-sm">AS</span>
+          </div>
+          <h1 className="text-xl font-bold text-slate-800">Decision Tree Builder</h1>
+        </div>
+        <div className="space-x-3 flex">
           {!tree && (
-            <button
-              onClick={initRoot}
-              className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-sm font-semibold shadow"
-            >
-              Add Root
-            </button>
+            <Button onClick={initRoot} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+              <Plus className="mr-2 h-4 w-4" />
+              Add Root Node
+            </Button>
           )}
           {tree && (
-            <button
-              onClick={handleEvaluate}
-              className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded text-sm font-semibold shadow"
-            >
-              Evaluate
-            </button>
+               <Button onClick={handleEvaluate} className="bg-blue-600 hover:bg-blue-700 text-white shadow-md">
+                 <Play className="mr-2 h-4 w-4" />
+                 Evaluate Tree
+               </Button>
           )}
         </div>
       </header>
 
-      <main className="flex-1 p-6 bg-gray-100 overflow-y-auto w-full">
-        {tree ? (
-          <div className="mx-auto w-full max-w-4xl bg-white shadow rounded-lg p-6">
-            <TreeNodeComponent
-              node={tree}
-              updateNode={updateNode}
-              addBranch={addBranch}
-              deleteNode={deleteNode}
-              updateBranchLabel={updateBranchLabel}
-            />
-          </div>
-        ) : (
-          <div className="flex items-center justify-center h-full text-gray-500">
-            No tree built. Click &quot;Add Root&quot; to begin.
-          </div>
-        )}
+      <main className="flex-1 overflow-hidden relative">
+        <ScrollArea className="h-full w-full p-4 md:p-8">
+          {tree ? (
+            <div className="mx-auto w-full max-w-5xl pb-20">
+              <TreeNodeComponent
+                node={tree}
+                updateNode={updateNode}
+                addBranch={addBranch}
+                deleteNode={deleteNode}
+                updateBranchLabel={updateBranchLabel}
+              />
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-[calc(100vh-8rem)]">
+               <Card className="w-full max-w-md shadow-sm border-dashed border-2">
+                 <CardContent className="flex flex-col items-center justify-center p-12 text-center text-slate-500 space-y-4">
+                   <div className="bg-slate-100 p-4 rounded-full">
+                     <Plus className="h-8 w-8 text-slate-400" />
+                   </div>
+                   <div>
+                     <h3 className="text-lg font-medium text-slate-900">No tree structure</h3>
+                     <p className="text-sm mt-1">Start by adding a root node to build your decision tree.</p>
+                   </div>
+                   <Button onClick={initRoot} variant="outline" className="mt-4">
+                     Initialize Tree
+                   </Button>
+                 </CardContent>
+               </Card>
+            </div>
+          )}
+        </ScrollArea>
       </main>
 
       {isEvaluating && tree && (
         <EvaluationDialog tree={tree} onClose={() => setIsEvaluating(false)} />
       )}
+
+      <MessageDialog 
+        isOpen={errorDialog.isOpen} 
+        onClose={() => setErrorDialog({ isOpen: false, message: "" })} 
+        title="Tree is incomplete" 
+        message={errorDialog.message} 
+      />
     </div>
   );
 }
