@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { TreeNode } from "../types/tree";
 
 const LOCAL_STORAGE_KEY = "es-builder-tree-v1";

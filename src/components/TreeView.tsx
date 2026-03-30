@@ -1,9 +1,10 @@
 // TreeView
-import { Play, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useTree } from "../state/useTree";
 import { EvaluationDialog } from "./EvaluationDialog";
 import { MessageDialog } from "./MessageDialog";
+import { TopBar } from "./TopBar";
 import { TreeNodeComponent } from "./TreeNode";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
@@ -14,6 +15,7 @@ export default function TreeView() {
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [errorDialog, setErrorDialog] = useState({ isOpen: false, message: "" });
   const [nodeToDelete, setNodeToDelete] = useState<string | null>(null);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   // Minimal validation before evaluating
   const validateTree = () => {
@@ -63,30 +65,13 @@ export default function TreeView() {
 
   return (
     <div className="flex flex-col h-screen bg-slate-50">
-      <header className="flex justify-between items-center p-4 bg-white border-b shadow-sm z-10">
-        <div className="flex items-center space-x-2">
-          <div className="h-8 w-8 bg-blue-600 rounded-md flex items-center justify-center">
-            <span className="text-white font-bold text-sm">DTB</span>
-          </div>
-          <h1 className="text-xl font-bold text-slate-800">Decision Tree Builder</h1>
-        <span className="text-xs text-slate-500">by Abdou Sadou</span>
-
-        </div>
-        <div className="space-x-3 flex">
-          {isHydrated && !tree && (
-            <Button onClick={initRoot} className="bg-emerald-600 hover:bg-emerald-700 text-white">
-              <Plus className="mr-2 h-4 w-4" />
-              Initialise Tree
-            </Button>
-          )}
-          {isHydrated && tree && (
-               <Button onClick={handleEvaluate} className="bg-blue-600 hover:bg-blue-700 text-white shadow-md">
-                 <Play className="mr-2 h-4 w-4" />
-                 Evaluate Tree
-               </Button>
-          )}
-        </div>
-      </header>
+<TopBar
+        isHydrated={isHydrated}
+        hasTree={!!tree}
+        onInitRoot={initRoot}
+        onEvaluate={handleEvaluate}
+        onClear={() => setShowClearConfirm(true)}
+      />
 
       <main className="flex-1 overflow-hidden relative">
         <ScrollArea className="h-full w-full p-4 md:p-8">
@@ -149,6 +134,17 @@ export default function TreeView() {
         confirmText="Delete Node"
         cancelText="Cancel"
       />
-    </div>
+      <MessageDialog
+        isOpen={showClearConfirm}
+        onClose={() => setShowClearConfirm(false)}
+        title="Clear Entire Project"
+        message="Are you sure you want to clear the entire project? This will delete all nodes and cannot be undone."
+        onConfirm={() => {
+          localStorage.removeItem("es-builder-tree-v1");
+          window.location.reload();
+        }}
+        confirmText="Clear Project"
+        cancelText="Cancel"
+      />    </div>
   );
 }
