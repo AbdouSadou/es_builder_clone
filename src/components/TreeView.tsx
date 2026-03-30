@@ -10,7 +10,7 @@ import { Card, CardContent } from "./ui/card";
 import { ScrollArea } from "./ui/scroll-area";
 
 export default function TreeView() {
-  const { tree, initRoot, updateNode, addBranch, deleteNode, updateBranchLabel } = useTree();
+  const { tree, isHydrated, initRoot, updateNode, addBranch, deleteNode, updateBranchLabel } = useTree();
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [errorDialog, setErrorDialog] = useState({ isOpen: false, message: "" });
   const [nodeToDelete, setNodeToDelete] = useState<string | null>(null);
@@ -73,13 +73,13 @@ export default function TreeView() {
 
         </div>
         <div className="space-x-3 flex">
-          {!tree && (
+          {isHydrated && !tree && (
             <Button onClick={initRoot} className="bg-emerald-600 hover:bg-emerald-700 text-white">
               <Plus className="mr-2 h-4 w-4" />
               Initialise Tree
             </Button>
           )}
-          {tree && (
+          {isHydrated && tree && (
                <Button onClick={handleEvaluate} className="bg-blue-600 hover:bg-blue-700 text-white shadow-md">
                  <Play className="mr-2 h-4 w-4" />
                  Evaluate Tree
@@ -90,7 +90,11 @@ export default function TreeView() {
 
       <main className="flex-1 overflow-hidden relative">
         <ScrollArea className="h-full w-full p-4 md:p-8">
-          {tree ? (
+          {!isHydrated ? (
+            <div className="flex justify-center items-center h-[calc(100vh-8rem)]">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          ) : tree ? (
             <div className="mx-auto w-full max-w-5xl pb-20">
               <TreeNodeComponent
                 node={tree}

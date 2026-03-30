@@ -1,8 +1,40 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { TreeNode } from "../types/tree";
+
+const LOCAL_STORAGE_KEY = "es-builder-tree-v1";
 
 export function useTree() {
   const [tree, setTree] = useState<TreeNode | null>(null);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Hydrate from localStorage on client-side mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (saved) {
+        setTree(JSON.parse(saved));
+      }
+    } catch (e) {
+      console.error("Failed to restore tree from local storage:", e);
+    } finally {
+      setIsHydrated(true);
+    }
+  }, []);
+
+  // Save changes to localStorage whenever the tree updates
+  useEffect(() => {
+    if (!isHydrated) return; // Prevent overwriting on initial render
+    
+    try {
+      if (tree) {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(tree));
+      } else {
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
+      }
+    } catch (e) {
+      console.error("Failed to save tree to local storage:", e);
+    }
+  }, [tree, isHydrated]);
 
   const initRoot = () => {
     setTree({
@@ -75,7 +107,7 @@ export function useTree() {
     });
   }, []);
 
-  return { tree, initRoot, updateNode, addBranch, deleteNode, updateBranchLabel };
+  return { tree, isHydrated, initRoot, updateNode, addBranch, deleteNode, updateBranchLabel };
 }
 
 function mapTree(node: TreeNode, fn: (node: TreeNode) => TreeNode): TreeNode {
