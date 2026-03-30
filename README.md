@@ -1,6 +1,6 @@
-# ES-Builder (Tree UI Version)
+# Decision Tree Builder
 
-ES-Builder is a frontend-only web app for building, visualizing, and evaluating hierarchical decision trees. It features an expandable tree UI and an interactive evaluation session to walk through decisions step by step.
+Decision Tree Builder is a frontend-only web app for building, visualising, and evaluating hierarchical decision trees. It features an expandable tree UI and an interactive evaluation session to walk through decisions step by step.
 
 ## Features
 
