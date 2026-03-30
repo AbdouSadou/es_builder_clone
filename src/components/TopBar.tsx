@@ -1,4 +1,4 @@
-import { Play, Plus, Trash2 } from "lucide-react";
+import { Download, Play, Plus, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
 
 export function TopBar({
@@ -7,12 +7,14 @@ export function TopBar({
   onInitRoot,
   onEvaluate,
   onClear,
+  onExport,
 }: {
   hasTree: boolean;
   isHydrated: boolean;
   onInitRoot: () => void;
   onEvaluate: () => void;
   onClear: () => void;
+  onExport: () => void;
 }) {
   return (
     <header className="flex justify-between items-center p-4 bg-white border-b shadow-sm z-10 shrink-0">
@@ -32,6 +34,10 @@ export function TopBar({
         )}
         {isHydrated && hasTree && (
           <>
+            <Button variant="outline" onClick={onExport} className="text-slate-600 hover:text-slate-800 hover:bg-slate-100">
+              <Download className="mr-2 h-4 w-4" />
+              Export
+            </Button>
             <Button variant="outline" onClick={onClear} className="text-red-500 hover:text-red-700 hover:bg-red-50 border-red-200">
               <Trash2 className="mr-2 h-4 w-4" />
               Clear Project

@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useTree } from "../state/useTree";
 import { EvaluationDialog } from "./EvaluationDialog";
+import { ExportDialog } from "./ExportDialog";
 import { MessageDialog } from "./MessageDialog";
 import { TopBar } from "./TopBar";
 import { TreeNodeComponent } from "./TreeNode";
@@ -16,6 +17,7 @@ export default function TreeView() {
   const [errorDialog, setErrorDialog] = useState({ isOpen: false, message: "" });
   const [nodeToDelete, setNodeToDelete] = useState<string | null>(null);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
 
   // Minimal validation before evaluating
   const validateTree = () => {
@@ -71,6 +73,7 @@ export default function TreeView() {
         onInitRoot={initRoot}
         onEvaluate={handleEvaluate}
         onClear={() => setShowClearConfirm(true)}
+        onExport={() => setShowExportDialog(true)}
       />
 
       <main className="flex-1 overflow-hidden relative">
@@ -145,6 +148,13 @@ export default function TreeView() {
         }}
         confirmText="Clear Project"
         cancelText="Cancel"
-      />    </div>
+      />
+
+      <ExportDialog
+        tree={tree}
+        isOpen={showExportDialog}
+        onClose={() => setShowExportDialog(false)}
+      />
+    </div>
   );
 }
